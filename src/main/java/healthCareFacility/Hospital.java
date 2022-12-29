@@ -1,6 +1,7 @@
 package healthCareFacility;
 
 import enums.PropertyType;
+import exceptions.BuildingLessThanZeroException;
 import healthCareFacility.Building;
 
 public class Hospital extends Building implements IGetInfo {
@@ -20,11 +21,11 @@ public class Hospital extends Building implements IGetInfo {
         return name;
     }
 
-    public void setName(String name) {
-        if (name.length() > 1) {
-            this.name = name;
+    public void setName(String name) throws BuildingLessThanZeroException {
+        if (name.length() < 1) {
+            throw new BuildingLessThanZeroException("Please enter a new Hospital name", new RuntimeException());
         } else {
-            System.out.println("Enter valid name");
+            this.name = name;
         }
     }
 

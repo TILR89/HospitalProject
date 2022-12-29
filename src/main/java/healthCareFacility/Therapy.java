@@ -1,12 +1,17 @@
 package healthCareFacility;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class Therapy {
+
+    org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(Therapy.class);
     private String treatment;
     private int duration;
 
@@ -85,21 +90,34 @@ public class Therapy {
 
     public String drugPrescribe(String diagnosis) {
         String prescribedDrug = null;
+        try {
 
-        switch (diagnosis) {
-            case "Cancer":
-                prescribedDrug = "Morphine";
-                break;
-            case "Headache":
-                prescribedDrug = "Ibuprofen";
-                break;
-            case "Caries":
-                prescribedDrug = "Aquafresh";
-                break;
-            default:
-                System.out.println("Take a sleep, at least it won't hurt.");
+            switch (diagnosis) {
+                case "Cancer":
+                    prescribedDrug = "Morphine";
+                    break;
+                case "Headache":
+                    prescribedDrug = "Ibuprofen";
+                    break;
+                case "Caries":
+                    prescribedDrug = "Aquafresh";
+                    break;
+                default:
+                    prescribedDrug = null;
+                    //System.out.println("Take a sleep, at least it won't hurt.");
+            }
+            return prescribedDrug;
+        } catch (Exception e) {
+            throw new RuntimeException("To prescribe drug need to get a diagnosis first.");
+        } finally {
+            if (prescribedDrug != null) {
+                LOGGER.info("You received a prescription.");
+            } else {
+                LOGGER.warn("We couldn't prescribe you any drugs, need to get a diagnosis first.");
+            }
+
         }
-        return prescribedDrug;
+
     }
 
 

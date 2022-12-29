@@ -2,14 +2,16 @@ package persons;
 
 import enums.Gender;
 import enums.PermitLevel;
+import exceptions.PermitLevelException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.Message;
 
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class AdministrativeStaff extends Staff {
+public class AdministrativeStaff extends Staff{
 
     Logger LOGGER = LogManager.getLogger(AdministrativeStaff.class);
     private int administratorId;
@@ -55,11 +57,11 @@ public class AdministrativeStaff extends Staff {
     }
 
 
-    public void setStaffJobTitle() {
+    public void setStaffJobTitle() throws PermitLevelException {
         if (Objects.equals(String.valueOf(permitLevel), "High"))
             setJobTitle();
         else {
-            LOGGER.error("You are not allowed to make any changes in Staff");
+            LOGGER.warn(PermitLevelException.MESSAGE_PERMIT);
         }
     }
 
@@ -69,18 +71,18 @@ public class AdministrativeStaff extends Staff {
 
     LinkedList<String> dailyRoutine = new LinkedList<>();
 
-    public void addDrugs(String duty) {
+    public void addDuty(String duty) {
         dailyRoutine.add(duty);
     }
-    public void addDrugs (int index, String duty){
+    public void addDDuty (int index, String duty){
         dailyRoutine.add(index ,duty);
     }
 
-    public void removeDrugs(int index){
+    public void removeDuty(int index){
         dailyRoutine.remove(index);
     }
 
-    public void removeDrugs(String duty){
+    public void removeDuty(String duty){
         dailyRoutine.remove(duty);
     }
 

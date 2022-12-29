@@ -1,47 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="debug" strict="true" name="XMLConfigTest"
-               packages="org.apache.logging.log4j.test">
+<Configuration status="WARN">
     <Properties>
-        <Property name="filename">target/test.log</Property>
+        <Property name="filename">./logs</Property>
     </Properties>
-    <Filter type="ThresholdFilter" level="trace"/>
 
     <Appenders>
-        <Appender type="Console" name="STDOUT">
-            <Layout type="PatternLayout" pattern="%m MDC%X%n"/>
-            <Filters>
-                <Filter type="MarkerFilter" marker="FLOW" onMatch="DENY" onMismatch="NEUTRAL"/>
-                <Filter type="MarkerFilter" marker="EXCEPTION" onMatch="DENY" onMismatch="ACCEPT"/>
-            </Filters>
-        </Appender>
-        <Appender type="Console" name="FLOW">
-            <Layout type="PatternLayout" pattern="%C{1}.%M %m %ex%n"/><!-- class and line number -->
-            <Filters>
-                <Filter type="MarkerFilter" marker="FLOW" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
-                <Filter type="MarkerFilter" marker="EXCEPTION" onMatch="ACCEPT" onMismatch="DENY"/>
-            </Filters>
-        </Appender>
-        <Appender type="File" name="File" fileName="${filename}">
-            <Layout type="PatternLayout">
-                <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
-            </Layout>
-        </Appender>
+        <RollingFile name = "file"
+        fileName = "${filename}/logHospital.log"
+        filePattern = "${filename}/logHospital - %d{HH-mm-ss}.log">
+            <PatternLayout>
+                <pattern> %d{HH:mm:ss} [%t] %-5level %Logger{36} - %msg%n</pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size = "1 KB" />
+        </RollingFile>
+
+        <Console name = "console" target = "SYSTEM_OUT">
+            <PatternLayout>
+            pattern = "%d{HH:mm:ss:SSS} [%t] %-5level %logger{36} - %msg%n"</PatternLayout>
+        </Console>
+
+        <appender name ="fileAppender" class = "org.apache.logging.log4j.core.appender.RollingFileAppender">
+            <param name = "File" value="testXML.log"/>
+            <layout class = "org.apache.logging.log4j.core.layout.PatternLayout">
+                    <param name = "ConversionPattern" value = "%d [%p|%c|%C{1}]"/>
+            </layout>
+        </appender>
+
     </Appenders>
 
     <Loggers>
-        <Logger name="org.apache.logging.log4j.test1" level="debug" additivity="false">
-            <Filter type="ThreadContextMapFilter">
-                <KeyValuePair key="test" value="123"/>
-            </Filter>
-            <AppenderRef ref="STDOUT"/>
+        <Logger name="hospital" level="info" additivity="false">
+            <AppenderRef ref="file"/>
+            <AppenderRef ref="console"/>
         </Logger>
 
-        <Logger name="org.apache.logging.log4j.test2" level="debug" additivity="false">
-            <AppenderRef ref="File"/>
-        </Logger>
-
-        <Root level="trace">
-            <AppenderRef ref="STDOUT"/>
+        <Root level="info">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+            <appender-ref ref = "fileAppender"/>
         </Root>
     </Loggers>
 

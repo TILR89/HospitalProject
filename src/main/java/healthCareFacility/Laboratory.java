@@ -1,8 +1,8 @@
 package healthCareFacility;
 
 import enums.PropertyType;
-import healthCareFacility.Building;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Laboratory extends Building implements IGetInfo {
@@ -68,4 +68,16 @@ public class Laboratory extends Building implements IGetInfo {
     public void removeAnalysis(String analysisName){
         analysis.remove(analysisName);
     }
+
+    public ArrayList<Laboratory> laboratories = new ArrayList<>();
+    public void addLaboratory(Laboratory lab){
+        laboratories.add(lab);
+    }
+    public ArrayList<Laboratory> getLaboratory(){
+        return laboratories;
+    }
+
+
+
+
 }

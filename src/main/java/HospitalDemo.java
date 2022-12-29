@@ -5,22 +5,27 @@ import exceptions.ScannerException;
 import healthCareFacility.Laboratory;
 import healthCareFacility.Therapy;
 import org.apache.logging.log4j.*;
-import persons.Doctor;
-import persons.Nurse;
-import persons.Patient;
-import persons.Person;
+import persons.*;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.ParseException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class HospitalDemo {
-    public static void main(String[] args) throws ScannerException, ParseException {
-        Logger LOGGER = LogManager.getLogger(HospitalDemo.class);
+    private static Logger LOGGER = LogManager.getLogger(HospitalDemo.class);
 
-        Laboratory dila = new Laboratory(PropertyType.Private, 120, 1, "Dila", 24, "Main analysis" );
+    public static void main(String[] args) throws ScannerException, ParseException, Exception {
+
+
+        Laboratory dila = new Laboratory();
+        Laboratory dila1 = new Laboratory(PropertyType.Private, 200, 2, "Dila1", 36, "Main analysis");
+        Laboratory dila2 = new Laboratory(PropertyType.Private, 250, 3, "Dila2", 48, "Main analysis");
+        Laboratory dila3 = new Laboratory(PropertyType.Private, 265, 3, "Dila3", 17, "Main analysis");
+        Laboratory dila4 = new Laboratory(PropertyType.Private, 270, 2, "Dila4", 20, "Main analysis");
+        Laboratory dila5 = new Laboratory(PropertyType.Private, 180, 1, "Dila5", 9, "Main analysis");
 
         Doctor d = new Doctor("John", "Smith", Gender.Male, 50, "Therapist");
 
@@ -28,13 +33,67 @@ public class HospitalDemo {
 
         Therapy therapy = new Therapy();
 
+
+        List<Patient> patients = Patient.getPatients();
+
+        List<Patient> females = patients.stream().filter(patient -> patient.getGender().equals(Gender.Female)).collect(Collectors.toList());
+        females.forEach(System.out::println);
+        System.out.println();
+
+        List<Patient> sortedAge = patients.stream().sorted(Comparator.comparing(Patient::getAge).reversed()).collect(Collectors.toList());
+        sortedAge.forEach(System.out::println);
+        System.out.println();
+
+        Double averagePatientsAge = patients.stream().collect(Collectors.averagingInt(Patient::getAge));
+        System.out.println(averagePatientsAge);
+
+        boolean anyMatch = patients.stream().anyMatch(patient -> patient.getAge() > 60);
+
+        patients.stream().max(Comparator.comparing(Patient::getAge)).ifPresent(System.out::println);
+
+        Map<Gender, List<Patient>> genderGroups = patients.stream().collect(Collectors.groupingBy(Patient::getGender));
+
+        genderGroups.forEach((gender, patients1) -> {
+            System.out.println(gender);
+            patients1.forEach(System.out::println);
+        });
+
+        Optional<String> oldestMalePatient = patients.stream().filter(patient -> patient.getGender().equals(Gender.Male)).max(Comparator.comparing(Patient::getAge)).map(Patient::getName);
+        oldestMalePatient.ifPresent(System.out::println);
+
+        //Reflection
+        AdministrativeStaff admin = new AdministrativeStaff();
+        admin.setAdministratorId(666);
+        Field[] adminFields = admin.getClass().getDeclaredFields();
+        for (Field field : adminFields) {
+            if (field.getName().equals("administratorId")) {
+                field.setAccessible(true);
+                field.set(admin, 777);
+            }
+            System.out.println(admin.getAdministratorId());
+        }
+
+        System.out.println();
+
+        Method[] adminMethods = admin.getClass().getDeclaredMethods();
+        for (Method method : adminMethods) {
+            System.out.println(method.getName());
+        }
+
+        for (Method method : adminMethods) {
+            if (method.getName().equals("addDuty")) {
+                method.setAccessible(true);
+                method.invoke(admin, "Sterilize tools");
+            }
+        }
+/*
         String complaint = d.getPatientComplaints();
         System.out.println(complaint);
         String doctorsDiagnosis = d.setPatientDiagnosis(complaint);
         System.out.println(doctorsDiagnosis);
         System.out.println(therapy.drugPrescribe(doctorsDiagnosis));
 
-/*
+
         int bobAge = p.checkPatientAge();
         System.out.println("Bob age is" + bobAge);
 
@@ -43,7 +102,12 @@ public class HospitalDemo {
         int acc = p.getAccountNumb();
         System.out.println(acc);
 
- */
+        LOGGER.info("Log to file");
+        LOGGER.fatal("fatal");
+        LOGGER.error("error");
+
+
+
 
 
         therapy.addDrugs("Morphine");
@@ -71,28 +135,16 @@ public class HospitalDemo {
         dila.addAnalysis(45, "Hormone analysis");
         dila.removeAnalysis(45);
 
-/*
-        int k = 1;
-        for(int i=0; i<4; i++){
 
-            for(int j = 1 ; j<=4-i; j++){
-                System.out.print(k);
-                System.out.print("\t");
-                k++;}
-                System.out.println("");
-            }
-
-        int l =1;
-        for (int i=1; i<5; i++){
-            for (int j=1; j<=i; j++){
-                System.out.print(l);
-                System.out.print("\t");
-                l++;
-            }
-            System.out.println("");
-        }
+        dila.addLaboratory(dila1);
+        dila.addLaboratory(dila2);
+        dila.addLaboratory(dila3);
+        dila.addLaboratory(dila4);
+        dila.addLaboratory(dila5);
 
  */
+
+
     }
 
 }
